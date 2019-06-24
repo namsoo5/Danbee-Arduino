@@ -9,12 +9,14 @@
 static const uint32_t GPSBaud = 9600;
 
 //와이파이 아이디 비번
-const char* ssid = "happy";
-const char* password = "00000940";
+const char* ssid = "쟇";
+const char* password = "aaa12344";
+const char* ssid1 = "happy";
+const char* password1 = "00000940";
 
 TinyGPS gps;
 SoftwareSerial ss(4, 5); //rx(gpi04==d2), tx(gpi05==d1)
-
+int wifi = -1;
 int status=0; //킥보드 초기상태(릴레이 0차단 1작동)
 
 void setup () {
@@ -27,6 +29,9 @@ void setup () {
 
 void loop() {
 
+  if(wifi == -1){
+    wifiSet();
+  }
   getStatus(); // status확인
   //delay(3000);
   
@@ -60,10 +65,10 @@ void getGps() {
     Serial.print(" LON=");
     Serial.print(flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6);
     Serial.println();
-    Serial.print("flat은: ");
+    Serial.print("lat은: ");
     String lat = String(flat, 6);
     Serial.println(lat);
-    Serial.print("flng은: ");
+    Serial.print("lng은: ");
     String lng = String(flon, 6);
     Serial.println(lng);
 
@@ -115,9 +120,9 @@ void setKickGps(String lat, String lng){
 
 void wifiSet() {
   WiFi.begin(ssid, password);
-
+  //WiFi.begin(ssid1, password1);
   while (WiFi.status() != WL_CONNECTED) {  //와이파이 연결될때까지 반복
-
+    wifi = 1;
     delay(1000);
     Serial.print("Connecting..");
 
@@ -126,7 +131,7 @@ void wifiSet() {
 void getStatus() {
 
   if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
-
+   
     HTTPClient http;  //Declare an object of class HTTPClient
 
     http.begin("http://3.17.25.223/api/kick/status/201435003");  //Specify request destination
@@ -166,5 +171,7 @@ void getStatus() {
 
     http.end();   //Close connection
 
+  }else{
+    wifi = -1;
   }
 }
