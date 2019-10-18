@@ -11,8 +11,8 @@ static const uint32_t GPSBaud = 9600;
 //와이파이 아이디 비번
 const char* ssid = "쟇";
 const char* password = "aaa12344";
-const char* ssid1 = "happy";
-const char* password1 = "00000940";
+const char* ssid1 = "SKHU_WIFI";
+const char* password1 = "1123456789";
 
 TinyGPS gps;
 SoftwareSerial ss(4, 5); //rx(gpi04==d2), tx(gpi05==d1)
@@ -21,6 +21,7 @@ int status=0; //킥보드 초기상태(릴레이 0차단 1작동)
 
 void setup () {
   pinMode(12, OUTPUT);
+  pinMode(13, OUTPUT);  //전구 키기
   Serial.begin(115200);
   wifiSet();
   ss.begin(9600);
@@ -83,7 +84,7 @@ void setKickGps(String lat, String lng){
 
     HTTPClient http;  //Declare an object of class HTTPClient
 
-    http.begin("http://3.17.25.223/api/kick/gps/set/201435003/"+lat+"/"+lng);  //Specify request destination
+    http.begin("http://3.17.25.223/api/kick/gps/set/201635019/"+lat+"/"+lng);  //Specify request destination
     int httpCode = http.GET();                                                                  //Send the request
     Serial.println(httpCode);
     if (httpCode == 200) { //Check the returning code  200 성공코드
@@ -119,8 +120,8 @@ void setKickGps(String lat, String lng){
 
 
 void wifiSet() {
-  WiFi.begin(ssid, password);
-  //WiFi.begin(ssid1, password1);
+  //WiFi.begin(ssid, password);
+  WiFi.begin(ssid1, password1);
   while (WiFi.status() != WL_CONNECTED) {  //와이파이 연결될때까지 반복
     wifi = 1;
     delay(1000);
@@ -134,7 +135,7 @@ void getStatus() {
    
     HTTPClient http;  //Declare an object of class HTTPClient
 
-    http.begin("http://3.17.25.223/api/kick/status/201435003");  //Specify request destination
+    http.begin("http://3.17.25.223/api/kick/status/201635019");  //Specify request destination
     int httpCode = http.GET();                                                                  //Send the request
     Serial.println(httpCode);
     if (httpCode == 200) { //Check the returning code  200 성공코드
@@ -163,8 +164,10 @@ void getStatus() {
       //킥보드 통신으로 전원제어
       if(status == 1){
         digitalWrite(12, HIGH);
+        digitalWrite(13, HIGH);
       }else{
         digitalWrite(12, LOW);
+        digitalWrite(13, LOW);
       }
 
     }
