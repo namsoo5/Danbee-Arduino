@@ -22,6 +22,7 @@ int status=0; //킥보드 초기상태(릴레이 0차단 1작동)
 void setup () {
   pinMode(12, OUTPUT);
   pinMode(13, OUTPUT);  //전구 키기
+  pinMode(14, OUTPUT);  //연결상태 전구
   Serial.begin(115200);
   wifiSet();
   ss.begin(9600);
@@ -120,14 +121,16 @@ void setKickGps(String lat, String lng){
 
 
 void wifiSet() {
-  //WiFi.begin(ssid, password);
-  WiFi.begin(ssid1, password1);
+  digitalWrite(14, LOW);
+  WiFi.begin(ssid, password);
+  //WiFi.begin(ssid1, password1);
   while (WiFi.status() != WL_CONNECTED) {  //와이파이 연결될때까지 반복
     wifi = 1;
     delay(1000);
     Serial.print("Connecting..");
 
   }
+  digitalWrite(14, HIGH);
 }
 void getStatus() {
 
